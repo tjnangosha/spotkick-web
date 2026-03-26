@@ -1,4 +1,5 @@
 import { createAPIFileRoute } from "@tanstack/react-start/api";
+import { decodeJwtPayload } from "@/lib/utils";
 
 const API_URL = process.env.API_URL;
 const AUTH_LOGIN_PATH = process.env.AUTH_LOGIN_PATH;
@@ -28,53 +29,25 @@ const buildUrl = (path: string) => {
   return new URL(path, baseUrl).toString();
 };
 
-const mapUser = (data: Record<string, unknown>) => {
-  const id = data.id ?? data.pk;
-  const email = data.email ?? data.username ?? data.user_email;
-  const nameFromParts = [data.first_name, data.last_name]
-    .filter(Boolean)
-    .join(" ")
-    .trim();
-  const name =
-    (data.name as string) || nameFromParts || (email as string) || undefined;
-  const image =
-    (data.image as string) ||
-    (data.avatar as string) ||
-    (data.profile_image as string) ||
-    undefined;
-
-  return {
-    id: id ? String(id) : undefined,
-    email: email ? String(email) : undefined,
-    name,
-    image,
-  };
-};
-
-const callMe = async (access: string) => {
-  return {
-    id: "1",
-    email: "admin@chelsea.com",
-    name: "Roman Abramovich",
-    image: "",
-  }
-
-  // TODO; - @nangosha - implement this on the backend and then re-enable this call
-  const mePath = ensureEnv(AUTH_ME_PATH, "AUTH_ME_PATH");
-  const response = await fetch(buildUrl(mePath), {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${access}`,
-      Accept: "application/json",
-    },
-  });
-
-  if (!response.ok) {
+const getUserFromToken = (access: string) => {
+  const payload = decodeJwtPayload(access);
+  if (!payload) {
     return null;
   }
 
-  const data = (await response.json()) as Record<string, unknown>;
-  return mapUser(data);
+  const name = [payload.first_name, payload.last_name]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
+  return {
+    id: payload.user_id ? String(payload.user_id) : undefined,
+    email: payload.email,
+    first_name: payload.first_name,
+    last_name: payload.last_name,
+    role: payload.role,
+    name: name || payload.email || undefined,
+  };
 };
 
 const refreshAccessToken = async (refresh: string) => {
@@ -106,6 +79,21 @@ export const APIRoute = createAPIFileRoute("/api/auth/$")({
   GET: async ({ request }) => {
     try {
       const url = new URL(request.url);
+      if (url.pathname.endsWith("/me")) {
+        const authHeader = request.headers.get("authorization") || "";
+        const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+        if (!token) {
+          return json(401, { message: "Missing access token" });
+        }
+
+        const user = getUserFromToken(token);
+        if (!user) {
+          return json(401, { message: "Invalid access token" });
+        }
+
+        return json(200, { user });
+      }
+
       return json(404, { message: "Not found" });
     } catch (error) {
       return json(500, { message: (error as Error).message });
@@ -145,7 +133,7 @@ export const APIRoute = createAPIFileRoute("/api/auth/$")({
         if (!access || !refresh) {
           return json(500, { message: "Missing auth tokens" });
         }
-        const user = await callMe(access);
+        const user = getUserFromToken(access);
 
         return json(200, {
           access,

@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { User } from "@/data/users";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
@@ -19,9 +18,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-// Define the roles and statuses from the sample data
-const ROLES = ["Admin", "User", "Moderator"];
-const STATUSES = ["Active", "Inactive"];
 
 // Define the form schema with validation
 const UserSettingsFormSchema = z.object({
@@ -34,48 +30,45 @@ const UserSettingsFormSchema = z.object({
   role: z.string().min(1, {
     message: "Please select a role.",
   }),
-  status: z.string().min(1, {
-    message: "Please select a status.",
-  }),
 });
 
 interface UserSettingsFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess?: (user: User) => void;
-  initialData?: Partial<User>;
+  // onSuccess?: (user: User) => void;
+  // initialData?: Partial<User>;
 }
 
 export function UserSettingsForm({
   open,
   onOpenChange,
-  onSuccess,
-  initialData,
+  // onSuccess,
+  // initialData,
 }: UserSettingsFormProps) {
   const queryClient = useQueryClient();
-  const isEditing = !!initialData?.id;
+  // const isEditing = !!initialData?.id;
 
   // Create form with validation
   const form = useAppForm({
-    validators: { onChange: UserSettingsFormSchema },
+    // validators: { onChange: UserSettingsFormSchema },
     defaultValues: {
-      name: initialData?.name || "",
-      email: initialData?.email || "",
-      role: initialData?.role || "",
-      status: initialData?.status || "",
+      // name: initialData?.name || "",
+      // email: initialData?.email || "",
+      // role: initialData?.role || "",
+      // status: initialData?.status || "",
     },
     onSubmit: async ({ value }) => {
       // Create a new user object
-      const updatedUser: User = {
-        id: initialData?.id || Math.floor(Math.random() * 1000),
-        name: value.name,
-        email: value.email,
-        role: value.role as "Admin" | "User" | "Moderator",
-        status: value.status as "Active" | "Inactive",
-        avatar: initialData?.avatar || "",
-        joinDate:
-          initialData?.joinDate || new Date().toISOString().split("T")[0],
-      };
+      // const updatedUser: User = {
+      //   id: initialData?.id || Math.floor(Math.random() * 1000),
+      //   name: value.name,
+      //   email: value.email,
+      //   role: value.role as "Admin" | "User" | "Moderator",
+      //   status: value.status as "Active" | "Inactive",
+      //   avatar: initialData?.avatar || "",
+      //   joinDate:
+      //     initialData?.joinDate || new Date().toISOString().split("T")[0],
+      // };
 
       // In a real app, you would call an API here
       // For now, we'll just invalidate the query to refresh the data
@@ -85,9 +78,9 @@ export function UserSettingsForm({
       queryClient.invalidateQueries({ queryKey: ["users"] });
 
       // Call onSuccess callback if provided
-      if (onSuccess) {
-        onSuccess(updatedUser);
-      }
+      // if (onSuccess) {
+        // onSuccess(updatedUser);
+      // }
 
       // Close the dialog
       onOpenChange(false);
@@ -108,7 +101,7 @@ export function UserSettingsForm({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Edit User Settings" : "Create New User"}
+            {/* {isEditing ? "Edit User Settings" : "Create New User"} */}
           </DialogTitle>
         </DialogHeader>
         <form.AppForm>
@@ -120,8 +113,8 @@ export function UserSettingsForm({
                   <field.FormLabel>Name</field.FormLabel>
                   <field.FormControl>
                     <Input
-                      placeholder="John Doe"
-                      value={field.state.value}
+                      placeholder="Member Name"
+                      // value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
                     />
@@ -139,8 +132,8 @@ export function UserSettingsForm({
                   <field.FormControl>
                     <Input
                       type="email"
-                      placeholder="john.doe@example.com"
-                      value={field.state.value}
+                      placeholder="member@spotkick.com"
+                      // value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
                     />
@@ -157,20 +150,13 @@ export function UserSettingsForm({
                   <field.FormLabel>Role</field.FormLabel>
                   <field.FormControl>
                     <Select
-                      value={field.state.value}
+                      // value={field.state.value}
                       onValueChange={field.handleChange}
                       onOpenChange={field.handleBlur}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a role" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {ROLES.map((role) => (
-                          <SelectItem key={role} value={role}>
-                            {role}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
                     </Select>
                   </field.FormControl>
                   <field.FormMessage />
@@ -185,20 +171,13 @@ export function UserSettingsForm({
                   <field.FormLabel>Status</field.FormLabel>
                   <field.FormControl>
                     <Select
-                      value={field.state.value}
+                      // value={field.state.value}
                       onValueChange={field.handleChange}
                       onOpenChange={field.handleBlur}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a status" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {STATUSES.map((status) => (
-                          <SelectItem key={status} value={status}>
-                            {status}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
                     </Select>
                   </field.FormControl>
                   <field.FormMessage />
@@ -215,7 +194,7 @@ export function UserSettingsForm({
                 Cancel
               </Button>
               <Button type="submit">
-                {isEditing ? "Update User" : "Create User"}
+                {/* {isEditing ? "Update User" : "Create User"} */}
               </Button>
             </div>
           </form>

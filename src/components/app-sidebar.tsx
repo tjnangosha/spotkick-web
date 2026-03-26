@@ -28,14 +28,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { navigationItems, userMenuItems } from "@/data/navigation";
-import { signOut } from "@/lib/auth";
+import { AuthUser, signOut } from "@/lib/auth";
 
 interface AppSidebarProps {
-  user?: {
-    name: string;
-    email: string;
-    avatar?: string;
-  };
+  user?: AuthUser;
 }
 
 export function AppSidebar({ user }: AppSidebarProps) {
@@ -44,12 +40,6 @@ export function AppSidebar({ user }: AppSidebarProps) {
   const handleLogout = async () => {
     await signOut();
     router.invalidate();
-  };
-
-  const defaultUser = {
-    name: user?.name || "John Doe",
-    email: user?.email || "john.doe@example.com",
-    avatar: user?.avatar || "",
   };
 
   return (
@@ -115,19 +105,19 @@ export function AppSidebar({ user }: AppSidebarProps) {
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
-                      src={defaultUser.avatar}
-                      alt={defaultUser.name}
+                      src={user?.image}
+                      alt={user?.name}
                     />
                     <AvatarFallback className="rounded-lg">
-                      {defaultUser.name.charAt(0).toUpperCase()}
+                      {user?.name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
-                      {defaultUser.name}
+                      {user?.name}
                     </span>
                     <span className="truncate text-xs">
-                      {defaultUser.email}
+                      {user?.email}
                     </span>
                   </div>
                   <ChevronUp className="ml-auto size-4" />

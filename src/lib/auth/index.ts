@@ -1,6 +1,7 @@
 export {
 	signIn,
 	signOut,
+	getCurrentUser,
 	silentRefresh,
 	type AuthSession,
 	type AuthUser,

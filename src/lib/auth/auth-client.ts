@@ -1,10 +1,11 @@
 import { useAuthStore } from "@/store/auth.store";
-import { console } from "inspector/promises";
+import { decodeJwtPayload } from "@/lib/utils";
 
 export interface AuthUser {
   id?: string;
   name?: string;
   email?: string;
+  role?: string;
   image?: string;
 }
 
@@ -144,4 +145,30 @@ export async function silentRefresh(): Promise<string | null> {
   useAuthStore.getState().setHasCheckedRefresh(true);
 
   return null;
+}
+
+export async function getCurrentUser(): Promise<AuthUser | null> {
+  const accessToken = useAuthStore.getState().accessToken;
+  if (!accessToken) {
+    return null;
+  }
+
+  // TODO; - @nangosha - store the user info in the auth store to avoid decoding the token on every request
+
+  const payload = decodeJwtPayload(accessToken);
+  if (!payload) {
+    return null;
+  }
+
+  const name = [payload.first_name, payload.last_name]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
+  return {
+    id: payload.user_id ? String(payload.user_id) : undefined,
+    email: payload.email,
+    name: name || payload.email || undefined,
+    role: payload.role || undefined,
+  };
 }

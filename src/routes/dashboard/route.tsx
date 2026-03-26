@@ -17,14 +17,15 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { UserNav } from "@/components/user-nav";
-import { getUser } from "@/data/users";
+import { AuthUser, getCurrentUser } from "@/lib/auth";
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/auth.store";
+import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardLayout,
-  loader: async () => await getUser(),
+  loader: async () => await getCurrentUser(),
 });
 
 export function DashboardLayout() {
@@ -40,7 +41,11 @@ export function DashboardLayout() {
     }
   }, [accessToken, hasCheckedRefresh, navigate]);
 
-  const user = Route.useLoaderData();
+  const { data: user,  } = useQuery({
+    queryKey: ["auth", "me"],
+    queryFn: () => getCurrentUser(),
+  });
+
   return (
     <SidebarProvider>
       <AppSidebar user={user} />

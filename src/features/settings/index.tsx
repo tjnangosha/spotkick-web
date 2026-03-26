@@ -9,26 +9,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import { getUsers } from "@/data/users";
+import { getCurrentUser } from "@/lib/auth";
 
 export default function SettingsView() {
   const [open, setOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  // Fetch the current user (in a real app, this would be from auth context)
-  const { data: userData } = useQuery({
-    queryKey: ["users"],
-    queryFn: () =>
-      getUsers({
-        data: {
-          page: 0,
-          pageSize: 10,
-        },
-      }),
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["auth", "me"],
+    queryFn: () => getCurrentUser(),
   });
-
-  // For demo purposes, we'll use the first user as the current user
-  const user = userData?.users?.[0];
 
   const handleEditSettings = () => {
     setCurrentUser(user);
@@ -68,32 +58,35 @@ export default function SettingsView() {
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Role
                 </h3>
-                <p>{user.role}</p>
+                <p>{(user as { role?: string }).role}</p>
               </div>
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Status
                 </h3>
-                <p>{user.status}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Join Date
-                </h3>
-                <p>{user.joinDate}</p>
+                <p>Active</p>
               </div>
             </div>
           </CardContent>
         </Card>
       )}
 
+      {!user && !isLoading && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Profile Information</CardTitle>
+            <CardDescription>Unable to load user details.</CardDescription>
+          </CardHeader>
+        </Card>
+      )}
+
       <UserSettingsForm
         open={open}
         onOpenChange={setOpen}
-        initialData={currentUser}
-        onSuccess={(updatedUser) => {
-          console.log("User updated:", updatedUser);
-        }}
+        // initialData={currentUser}
+        // onSuccess={(updatedUser) => {
+        //   console.log("User updated:", updatedUser);
+        // }}
       />
     </div>
   );
