@@ -18,19 +18,28 @@ import {
 } from "@/components/ui/sidebar";
 import { UserNav } from "@/components/user-nav";
 import { getUser } from "@/data/users";
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useAuthStore } from "@/store/auth.store";
 
 export const Route = createFileRoute("/dashboard")({
-  beforeLoad: async ({ context }) => {
-    if (!context.userSession.isAuthenticated) {
-      throw redirect({ to: "/" });
-    }
-  },
   component: DashboardLayout,
   loader: async () => await getUser(),
 });
 
 export function DashboardLayout() {
+  const { accessToken, hasCheckedRefresh } = useAuthStore((state) => ({
+    accessToken: state.accessToken,
+    hasCheckedRefresh: state.hasCheckedRefresh,
+  }));
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (hasCheckedRefresh && !accessToken) {
+      navigate({ to: "/" });
+    }
+  }, [accessToken, hasCheckedRefresh, navigate]);
+
   const user = Route.useLoaderData();
   return (
     <SidebarProvider>

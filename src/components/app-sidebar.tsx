@@ -28,9 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { navigationItems, userMenuItems } from "@/data/navigation";
-import { signOut, useSession } from "@/lib/auth";
-import { authQueries } from "@/services/queries";
-import { useQueryClient } from "@tanstack/react-query";
+import { signOut } from "@/lib/auth";
 
 interface AppSidebarProps {
   user?: {
@@ -41,20 +39,17 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ user }: AppSidebarProps) {
-  const { data } = useSession();
-  const queryClient = useQueryClient();
   const router = useRouter();
 
   const handleLogout = async () => {
     await signOut();
-    await queryClient.invalidateQueries({ queryKey: authQueries.all });
     router.invalidate();
   };
 
   const defaultUser = {
-    name: data?.user?.name || "John Doe",
-    email: data?.user?.email || "john.doe@example.com",
-    avatar: data?.user?.image || "",
+    name: user?.name || "John Doe",
+    email: user?.email || "john.doe@example.com",
+    avatar: user?.avatar || "",
   };
 
   return (
