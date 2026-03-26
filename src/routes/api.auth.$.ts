@@ -177,14 +177,16 @@ export const APIRoute = createAPIFileRoute("/api/auth/$")({
         if (AUTH_LOGOUT_PATH) {
           const body = await request.json().catch(() => ({}));
           const refresh = body.refresh;
+          const access = body.access;
           if (refresh) {
             await fetch(buildUrl(AUTH_LOGOUT_PATH), {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
                 Accept: "application/json",
+                ...(access ? { Authorization: `Bearer ${access}` } : {}),
               },
-              body: JSON.stringify({ refresh }),
+              body: JSON.stringify({ refresh, access }),
             }).catch(() => null);
           }
         }

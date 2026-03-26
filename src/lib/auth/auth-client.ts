@@ -92,12 +92,14 @@ export async function signIn(payload: SignInInput): Promise<AuthSession> {
 
 export async function signOut(): Promise<void> {
   const refreshToken = getStoredRefreshToken();
+  const accessToken = useAuthStore.getState().accessToken;
   await fetch(buildUrl("/auth/logout/"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     },
-    body: JSON.stringify({ refresh: refreshToken }),
+    body: JSON.stringify({ refresh: refreshToken, access: accessToken }),
   });
   setStoredRefreshToken(null);
   useAuthStore.getState().clearAuth();
