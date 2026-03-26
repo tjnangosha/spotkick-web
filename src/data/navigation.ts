@@ -1,13 +1,6 @@
 import {
   LayoutDashboard,
   Users,
-  Settings,
-  BarChart3,
-  FileText,
-  Package,
-  ShoppingCart,
-  Bell,
-  HelpCircle,
 } from "lucide-react";
 
 export interface NavigationItem {
@@ -25,30 +18,16 @@ export const navigationItems: NavigationItem[] = [
     icon: LayoutDashboard,
   },
   {
-    title: "Products",
-    href: "/dashboard/products",
-    icon: Package,
-  },
-  {
-    title: "Settings",
-    href: "/dashboard/settings",
-    icon: Settings,
-  },
-  {
-    title: "Login",
-    href: "/",
-    icon: HelpCircle,
+    title: "Players",
+    href: "/dashboard/players",
+    icon: Users,
   },
 ];
 
 export const userMenuItems = [
   {
-    title: "Profile",
-    href: "/dashboard/profile",
-  },
-  {
     title: "Account Settings",
-    href: "/dashboard/account",
+    href: "/dashboard/settings",
   },
   {
     title: "Logout",

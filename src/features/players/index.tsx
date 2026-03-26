@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Product } from "@/data/products";
-import { Route } from "@/routes/dashboard/products";
-import { ProductsFilters, productsQueryOptions } from "@/utils/products";
+import { Product } from "@/data/players";
+import { Route } from "@/routes/dashboard/players";
+import { ProductsFilters, productsQueryOptions } from "@/utils/players";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import { useState } from "react";
-import { ProductForm } from "./product-form";
-import { ProductTable } from "./product-table";
+import { ProductForm } from "./player-form";
+import { ProductTable } from "./player-table";
 
 export default function ProductPage() {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -109,10 +109,9 @@ export default function ProductPage() {
       <div>
         <div className="flex flex-row items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Products</h1>
+            <h1 className="text-2xl font-bold">Players</h1>
             <p className="text-sm text-gray-500">
-              Manage your products inventory with advanced filtering and
-              sorting.
+              Manage your players.
             </p>
           </div>
           <Button
@@ -121,7 +120,7 @@ export default function ProductPage() {
               setIsAddProductOpen(true);
             }}
           >
-            Add Product
+            Add Player
           </Button>
         </div>
         <div>

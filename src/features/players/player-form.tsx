@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Product } from "@/data/products";
+import { Product } from "@/data/players";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,

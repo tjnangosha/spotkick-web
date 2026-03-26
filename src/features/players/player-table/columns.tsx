@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Product } from "@/data/products";
+import { Product } from "@/data/players";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { Badge } from "@/components/ui/badge";
 

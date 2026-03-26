@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { getProducts } from "@/data/products";
+import { getProducts } from "@/data/players";
 
 export type ProductsFilters = {
   page?: number;

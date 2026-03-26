@@ -54,10 +54,6 @@ export function DashboardLayout() {
             />
             <PathBreadcrumbs />
           </div>
-          <div className="flex items-center gap-3">
-            <ModeToggle />
-            <UserNav user={user} />
-          </div>
         </header>
 
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">

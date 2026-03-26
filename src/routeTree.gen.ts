@@ -15,7 +15,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as DashboardIndexImport } from './routes/dashboard/index'
 import { Route as DashboardSettingsImport } from './routes/dashboard/settings'
-import { Route as DashboardProductsImport } from './routes/dashboard/products'
+import { Route as DashboardPlayersImport } from './routes/dashboard/players'
 
 // Create/Update Routes
 
@@ -43,9 +43,9 @@ const DashboardSettingsRoute = DashboardSettingsImport.update({
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 
-const DashboardProductsRoute = DashboardProductsImport.update({
-  id: '/products',
-  path: '/products',
+const DashboardPlayersRoute = DashboardPlayersImport.update({
+  id: '/players',
+  path: '/players',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 
@@ -67,11 +67,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRoute
     }
-    '/dashboard/products': {
-      id: '/dashboard/products'
-      path: '/products'
-      fullPath: '/dashboard/products'
-      preLoaderRoute: typeof DashboardProductsImport
+    '/dashboard/players': {
+      id: '/dashboard/players'
+      path: '/players'
+      fullPath: '/dashboard/players'
+      preLoaderRoute: typeof DashboardPlayersImport
       parentRoute: typeof DashboardRouteImport
     }
     '/dashboard/settings': {
@@ -94,13 +94,13 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface DashboardRouteRouteChildren {
-  DashboardProductsRoute: typeof DashboardProductsRoute
+  DashboardPlayersRoute: typeof DashboardPlayersRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
-  DashboardProductsRoute: DashboardProductsRoute,
+  DashboardPlayersRoute: DashboardPlayersRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
@@ -112,14 +112,14 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/dashboard/products': typeof DashboardProductsRoute
+  '/dashboard/players': typeof DashboardPlayersRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard/products': typeof DashboardProductsRoute
+  '/dashboard/players': typeof DashboardPlayersRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
 }
@@ -128,7 +128,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/dashboard/products': typeof DashboardProductsRoute
+  '/dashboard/players': typeof DashboardPlayersRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -138,16 +138,16 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
-    | '/dashboard/products'
+    | '/dashboard/players'
     | '/dashboard/settings'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard/products' | '/dashboard/settings' | '/dashboard'
+  to: '/' | '/dashboard/players' | '/dashboard/settings' | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
-    | '/dashboard/products'
+    | '/dashboard/players'
     | '/dashboard/settings'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
@@ -183,13 +183,13 @@ export const routeTree = rootRoute
     "/dashboard": {
       "filePath": "dashboard/route.tsx",
       "children": [
-        "/dashboard/products",
+        "/dashboard/players",
         "/dashboard/settings",
         "/dashboard/"
       ]
     },
-    "/dashboard/products": {
-      "filePath": "dashboard/products.tsx",
+    "/dashboard/players": {
+      "filePath": "dashboard/players.tsx",
       "parent": "/dashboard"
     },
     "/dashboard/settings": {

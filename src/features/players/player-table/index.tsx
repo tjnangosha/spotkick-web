@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import { columns, createColumns } from "./columns";
-import { Product } from "@/data/products";
+import { Product } from "@/data/players";
 
 interface ProductTableProps {
   data: {

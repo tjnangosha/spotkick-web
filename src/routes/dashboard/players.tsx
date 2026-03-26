@@ -10,14 +10,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
-import { createColumns } from "@/features/products/product-table/columns";
-import { productsQueryOptions, ProductsFilters } from "@/utils/products";
+import { createColumns } from "@/features/players/player-table/columns";
+import { productsQueryOptions, ProductsFilters } from "@/utils/players";
 import { Button } from "@/components/ui/button";
-import { ProductForm } from "@/features/products/product-form";
-import { Product } from "@/data/products";
+import { ProductForm } from "@/features/players/player-form";
+import { Product } from "@/data/players";
 import { useToast } from "@/components/ui/use-toast";
 import { z } from "zod";
-import ProductPage from "@/features/products";
+import ProductPage from "@/features/players";
 
 const productsSearchSchema = z.object({
   page: z.number().optional(),
@@ -29,7 +29,7 @@ const productsSearchSchema = z.object({
   status: z.string().optional(),
 });
 
-export const Route = createFileRoute("/dashboard/products")({
+export const Route = createFileRoute("/dashboard/players")({
   component: ProductPage,
   validateSearch: (search) => productsSearchSchema.parse(search),
   loaderDeps: ({ search }) => ({
@@ -55,7 +55,7 @@ export const Route = createFileRoute("/dashboard/products")({
     // Prefetch data using React Query
     await context.queryClient.ensureQueryData(productsQueryOptions(filters));
     return {
-      crumb: "Products",
+      crumb: "Players",
     };
   },
 });
