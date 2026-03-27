@@ -10,19 +10,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Product } from "@/data/players";
+import { Player } from "@/services/players";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { Badge } from "@/components/ui/badge";
 
-interface ProductActionsProps {
-  onEdit?: (product: Product) => void;
-  onDelete?: (product: Product) => void;
+interface PlayerActionsProps {
+  onEdit?: (player: Player) => void;
+  onDelete?: (player: Player) => void;
 }
 
 export const createColumns = ({
   onEdit,
   onDelete,
-}: ProductActionsProps = {}): ColumnDef<Product>[] => [
+}: PlayerActionsProps = {}): ColumnDef<Player>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -48,7 +48,7 @@ export const createColumns = ({
   {
     accessorKey: "id",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Product ID" />
+      <DataTableColumnHeader column={column} title="Player ID" />
     ),
     cell: ({ row }) => <div className="font-medium">{row.getValue("id")}</div>,
   },
@@ -135,7 +135,7 @@ export const createColumns = ({
   {
     id: "actions",
     cell: ({ row }) => {
-      const product = row.original;
+      const player = row.original;
 
       return (
         <DropdownMenu>
@@ -148,20 +148,20 @@ export const createColumns = ({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(product.id)}
+              onClick={() => navigator.clipboard.writeText(player.id)}
             >
-              Copy product ID
+              Copy player ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onEdit?.(product)}>
-              Edit product
+            <DropdownMenuItem onClick={() => onEdit?.(player)}>
+              Edit player
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => onDelete?.(product)}
+              onClick={() => onDelete?.(player)}
               className="text-destructive"
             >
-              Delete product
+              Delete player
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

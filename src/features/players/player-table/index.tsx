@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import { columns, createColumns } from "./columns";
-import { Product } from "@/data/players";
+import { Player } from "@/services/players";
 
-interface ProductTableProps {
+interface PlayerTableProps {
   data: {
-    products: Product[];
+    players: Player[];
     pagination: {
       page: number;
       pageSize: number;
@@ -16,28 +16,28 @@ interface ProductTableProps {
   handlePaginationChange: (page: number, pageSize: number) => void;
   handleSortingChange: (sorting: SortingState) => void;
   handleFilterChange: (filters: ColumnFiltersState) => void;
-  onEditProduct?: (product: Product) => void;
-  onDeleteProduct?: (product: Product) => void;
+  onEditPlayer?: (player: Player) => void;
+  onDeletePlayer?: (player: Player) => void;
 }
 
-export function ProductTable({
+export function PlayerTable({
   data,
   handlePaginationChange,
   handleSortingChange,
   handleFilterChange,
-  onEditProduct,
-  onDeleteProduct,
-}: ProductTableProps) {
+  onEditPlayer,
+  onDeletePlayer,
+}: PlayerTableProps) {
   // Create columns with action handlers
   const tableColumns = createColumns({
-    onEdit: onEditProduct,
-    onDelete: onDeleteProduct,
+    onEdit: onEditPlayer,
+    onDelete: onDeletePlayer,
   });
 
   return (
     <DataTable
       columns={tableColumns}
-      data={data.products}
+      data={data.players}
       searchKey="name"
       onPaginationChange={handlePaginationChange}
       onSortingChange={handleSortingChange}

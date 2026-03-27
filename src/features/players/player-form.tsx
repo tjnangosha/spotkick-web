@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Product } from "@/data/players";
+import { Player } from "@/services/players";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
@@ -29,9 +29,9 @@ const CATEGORIES = [
 ];
 
 // Define the form schema with validation
-const ProductFormSchema = z.object({
+const PlayerFormSchema = z.object({
   name: z.string().min(2, {
-    message: "Product name must be at least 2 characters.",
+    message: "Player name must be at least 2 characters.",
   }),
   category: z.string().min(1, {
     message: "Please select a category.",
@@ -44,25 +44,25 @@ const ProductFormSchema = z.object({
   }),
 });
 
-interface ProductFormProps {
+interface PlayerFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess?: (product: Product) => void;
-  initialData?: Partial<Product>;
+  onSuccess?: (player: Player) => void;
+  initialData?: Partial<Player>;
 }
 
-export function ProductForm({
+export function PlayerForm({
   open,
   onOpenChange,
   onSuccess,
   initialData,
-}: ProductFormProps) {
+}: PlayerFormProps) {
   const queryClient = useQueryClient();
   const isEditing = !!initialData?.id;
 
   // Create form with validation
   const form = useAppForm({
-    validators: { onChange: ProductFormSchema },
+    validators: { onChange: PlayerFormSchema },
     defaultValues: {
       name: initialData?.name || "",
       category: initialData?.category || "",
@@ -70,9 +70,9 @@ export function ProductForm({
       stock: initialData?.stock ? String(initialData.stock) : "",
     },
     onSubmit: async ({ value }) => {
-      // Create a new product object
-      const newProduct: Product = {
-        id: initialData?.id || `PROD-${Math.floor(Math.random() * 1000)}`,
+      // Create a new player object
+      const newPlayer: Player = {
+        id: initialData?.id || `PLAYER-${Math.floor(Math.random() * 1000)}`,
         name: value.name,
         category: value.category,
         price: Number(value.price),
@@ -92,11 +92,11 @@ export function ProductForm({
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate API call
 
       // Invalidate queries to refresh the data
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["players"] });
 
       // Call onSuccess callback if provided
       if (onSuccess) {
-        onSuccess(newProduct);
+        onSuccess(newPlayer);
       }
 
       // Close the dialog
@@ -118,7 +118,7 @@ export function ProductForm({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Edit Product" : "Add New Product"}
+            {isEditing ? "Edit Player" : "Add New Player"}
           </DialogTitle>
         </DialogHeader>
         <form.AppForm>
@@ -127,10 +127,10 @@ export function ProductForm({
               name="name"
               children={(field) => (
                 <field.FormItem>
-                  <field.FormLabel>Product Name</field.FormLabel>
+                  <field.FormLabel>Player Name</field.FormLabel>
                   <field.FormControl>
                     <Input
-                      placeholder="Premium Headphones"
+                      placeholder="Player Name"
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
@@ -227,7 +227,7 @@ export function ProductForm({
                 Cancel
               </Button>
               <Button type="submit">
-                {isEditing ? "Update Product" : "Add Product"}
+                {isEditing ? "Update Player" : "Add Player"}
               </Button>
             </div>
           </form>

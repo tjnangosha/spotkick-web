@@ -11,15 +11,14 @@ import {
 } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { createColumns } from "@/features/players/player-table/columns";
-import { productsQueryOptions, ProductsFilters } from "@/utils/players";
+import { playersQueryOptions, PlayersFilters } from "@/services/players";
 import { Button } from "@/components/ui/button";
-import { ProductForm } from "@/features/players/player-form";
-import { Product } from "@/data/players";
+import { Player } from "@/services/players";
 import { useToast } from "@/components/ui/use-toast";
 import { z } from "zod";
-import ProductPage from "@/features/players";
+import PlayerPage from "@/features/players";
 
-const productsSearchSchema = z.object({
+const playersSearchSchema = z.object({
   page: z.number().optional(),
   pageSize: z.number().optional(),
   sortBy: z.string().optional(),
@@ -30,8 +29,8 @@ const productsSearchSchema = z.object({
 });
 
 export const Route = createFileRoute("/dashboard/players")({
-  component: ProductPage,
-  validateSearch: (search) => productsSearchSchema.parse(search),
+  component: PlayerPage,
+  validateSearch: (search) => playersSearchSchema.parse(search),
   loaderDeps: ({ search }) => ({
     page: search.page,
     pageSize: search.pageSize,
@@ -42,7 +41,7 @@ export const Route = createFileRoute("/dashboard/players")({
     status: search.status,
   }),
   loader: async ({ context, deps }) => {
-    const filters: ProductsFilters = {
+    const filters: PlayersFilters = {
       page: deps.page,
       pageSize: deps.pageSize,
       sortBy: deps.sortBy,
@@ -52,8 +51,10 @@ export const Route = createFileRoute("/dashboard/players")({
       status: deps.status,
     };
 
-    // Prefetch data using React Query
-    await context.queryClient.ensureQueryData(productsQueryOptions(filters));
+    if (typeof window !== "undefined") {
+      // Prefetch data using React Query
+      await context.queryClient.ensureQueryData(playersQueryOptions(filters));
+    }
     return {
       crumb: "Players",
     };

@@ -22,6 +22,7 @@ export const fetchWithAuth = async (
   const response = await fetch(input, {
     ...requestInit,
     headers,
+    credentials: requestInit.credentials ?? "include",
   });
 
   if (!retryOnUnauthorized || response.status !== 401) {
@@ -39,5 +40,6 @@ export const fetchWithAuth = async (
   return fetch(input, {
     ...requestInit,
     headers: retryHeaders,
+    credentials: requestInit.credentials ?? "include",
   });
 };

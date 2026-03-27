@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Product } from "@/data/players";
+import { Player } from "@/services/players";
 import { Route } from "@/routes/dashboard/players";
-import { ProductsFilters, productsQueryOptions } from "@/utils/players";
+import { PlayersFilters, playersQueryOptions } from "@/services/players";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import { useState } from "react";
-import { ProductForm } from "./player-form";
-import { ProductTable } from "./player-table";
+import { PlayerForm } from "./player-form";
+import { PlayerTable } from "./player-table";
 
-export default function ProductPage() {
-  const [isAddProductOpen, setIsAddProductOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+export default function PlayerPage() {
+  const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false);
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
 
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
@@ -19,18 +19,17 @@ export default function ProductPage() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const filters: ProductsFilters = {
+  const filters: PlayersFilters = {
     page: search.page,
     pageSize: search.pageSize,
     sortBy: search.sortBy,
     sortOrder: search.sortOrder,
-    name: search.name,
     category: search.category,
     status: search.status,
   };
 
   // Use React Query to fetch data
-  const { data, isFetching } = useSuspenseQuery(productsQueryOptions(filters));
+  const { data, isFetching } = useSuspenseQuery(playersQueryOptions(filters));
 
   // Handle pagination change
   const handlePaginationChange = (page: number, pageSize: number) => {
@@ -90,17 +89,17 @@ export default function ProductPage() {
     });
   };
 
-  // Handle edit product
-  const handleEditProduct = (product: Product) => {
-    setEditingProduct(product);
-    setIsAddProductOpen(true);
+  // Handle edit player
+  const handleEditPlayer = (player: Player) => {
+    setEditingPlayer(player);
+    setIsAddPlayerOpen(true);
   };
 
-  // Handle delete product
-  const handleDeleteProduct = (product: Product) => {
+  // Handle delete player
+  const handleDeletePlayer = (player: Player) => {
     toast({
-      title: "Product deleted",
-      description: `${product.name} has been deleted.`,
+      title: "Player deleted",
+      description: `${player.name ?? "Player"} has been deleted.`,
     });
   };
 
@@ -116,32 +115,34 @@ export default function ProductPage() {
           </div>
           <Button
             onClick={() => {
-              setEditingProduct(null);
-              setIsAddProductOpen(true);
+              setEditingPlayer(null);
+              setIsAddPlayerOpen(true);
             }}
           >
             Add Player
           </Button>
         </div>
         <div>
-          <ProductTable
+          <PlayerTable
             data={data}
             handlePaginationChange={handlePaginationChange}
             handleSortingChange={handleSortingChange}
             handleFilterChange={handleFilterChange}
-            onEditProduct={handleEditProduct}
-            onDeleteProduct={handleDeleteProduct}
+            onEditPlayer={handleEditPlayer}
+            onDeletePlayer={handleDeletePlayer}
           />
         </div>
       </div>
-      <ProductForm
-        open={isAddProductOpen}
-        onOpenChange={setIsAddProductOpen}
-        initialData={editingProduct || undefined}
-        onSuccess={(product: Product) => {
+      <PlayerForm
+        open={isAddPlayerOpen}
+        onOpenChange={setIsAddPlayerOpen}
+        initialData={editingPlayer || undefined}
+        onSuccess={(player: Player) => {
           toast({
-            title: editingProduct ? "Product updated" : "Product added",
-            description: `${product.name} has been ${editingProduct ? "updated" : "added"}.`,
+            title: editingPlayer ? "Player updated" : "Player added",
+            description: `${player.name ?? "Player"} has been ${
+              editingPlayer ? "updated" : "added"
+            }.`,
           });
         }}
       />
