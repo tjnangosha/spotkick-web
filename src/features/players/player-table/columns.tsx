@@ -13,6 +13,7 @@ import {
 import { Player } from "@/services/players";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { Badge } from "@/components/ui/badge";
+import { ucFirst } from "@/lib/utils";
 
 interface PlayerActionsProps {
   onEdit?: (player: Player) => void;
@@ -46,128 +47,88 @@ export const createColumns = ({
     enableHiding: false,
   },
   {
-    accessorKey: "id",
+    accessorKey: "country",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Player ID" />
+      <DataTableColumnHeader column={column} title="Country" />
     ),
-    cell: ({ row }) => <div className="font-medium">{row.getValue("id")}</div>,
+    accessorFn: (row) => row.user?.country || "N/A",
   },
   {
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    accessorFn: (row) => row.user?.firstName && row.user?.lastName ? `${row.user.firstName} ${row.user.lastName}` : "N/A",
   },
   {
-    accessorKey: "category",
+    accessorKey: "position",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Category" />
+      <DataTableColumnHeader column={column} title="Position" />
     ),
-    cell: ({ row }) => <div>{row.getValue("category")}</div>,
+    cell: ({ row }) => <div>{ucFirst(row.getValue("position"))}</div>,
   },
   {
-    accessorKey: "price",
+    accessorKey: "dateJoinedClub",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Price" />
+      <DataTableColumnHeader column={column} title="Date Joined" />
     ),
     cell: ({ row }) => {
-      const price = parseFloat(row.getValue("price"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(price);
-
-      return <div className="text-right font-medium">{formatted}</div>;
+      const dateJoinedClub = parseFloat(row.getValue("dateJoinedClub"));
+      return <div className="font-medium">{dateJoinedClub}</div>;
     },
   },
   {
-    accessorKey: "stock",
+    accessorKey: "isActivePlayer",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Stock" />
+      <DataTableColumnHeader column={column} title="Is Active" />
     ),
     cell: ({ row }) => (
-      <div className="text-center">{row.getValue("stock")}</div>
+      <div className="font-medium">{row.getValue("isActivePlayer") ? "Yes" : "No"}</div>
     ),
   },
   {
-    accessorKey: "status",
+    accessorKey: "jerseyNumber",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
+      <DataTableColumnHeader column={column} title="Jersey Number" />
     ),
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string;
+    cell: ({ row }) => <div className="font-medium">{row.getValue("jerseyNumber")}</div>,
+  },
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => {
+  //     const player = row.original;
 
-      return (
-        <div className="flex justify-center">
-          <Badge
-            variant={
-              status === "in_stock"
-                ? "default"
-                : status === "low_stock"
-                  ? "secondary"
-                  : "destructive"
-            }
-          >
-            {status === "in_stock"
-              ? "In Stock"
-              : status === "low_stock"
-                ? "Low Stock"
-                : "Out of Stock"}
-          </Badge>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Created At" />
-    ),
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt"));
-      return <div>{date.toLocaleDateString()}</div>;
-    },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const player = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(player.id)}
-            >
-              Copy player ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onEdit?.(player)}>
-              Edit player
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onDelete?.(player)}
-              className="text-destructive"
-            >
-              Delete player
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
+  //     return (
+  //       <DropdownMenu>
+  //         <DropdownMenuTrigger asChild>
+  //           <Button variant="ghost" className="h-8 w-8 p-0">
+  //             <span className="sr-only">Open menu</span>
+  //             <MoreHorizontal className="h-4 w-4" />
+  //           </Button>
+  //         </DropdownMenuTrigger>
+  //         <DropdownMenuContent align="end">
+  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+  //           <DropdownMenuItem
+  //             onClick={() => navigator.clipboard.writeText(player.id)}
+  //           >
+  //             Copy player ID
+  //           </DropdownMenuItem>
+  //           <DropdownMenuSeparator />
+  //           <DropdownMenuItem>View details</DropdownMenuItem>
+  //           <DropdownMenuItem onClick={() => onEdit?.(player)}>
+  //             Edit player
+  //           </DropdownMenuItem>
+  //           <DropdownMenuItem
+  //             onClick={() => onDelete?.(player)}
+  //             className="text-destructive"
+  //           >
+  //             Delete player
+  //           </DropdownMenuItem>
+  //         </DropdownMenuContent>
+  //       </DropdownMenu>
+  //     );
+  //   },
+  // },
 ];
 
 // Export default columns for backward compatibility

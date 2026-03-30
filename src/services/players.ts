@@ -1,10 +1,18 @@
 import { queryOptions } from "@tanstack/react-query";
 import { fetchWithAuth } from "@/lib/api/client";
 import { buildApiUrl, getApiBaseUrl } from "@/lib/api/config";
+import { camelCaseKeys } from "@/lib/utils";
+
+export type User = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  country?: string;
+}
 
 export type Player = {
-  id: string;
-  name?: string;
+  user: User;
   position?: string;
   jerseyNumber?: number;
   dateJoinedClub?: string;
@@ -57,9 +65,9 @@ const fetchPlayers = async (filters: PlayersFilters = {}) => {
     throw new Error("Failed to fetch players");
   }
 
-  const data = (await response.json()) as PlayersResponse;
+  const data = (await response.json());
   return {
-    players: data.players || [],
+    players: camelCaseKeys(data) || [],
     pagination: data.pagination || { page: 0, pageSize: 10, totalPages: 1 },
   } as PlayersResponse;
 };

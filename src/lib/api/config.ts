@@ -11,7 +11,7 @@ export const buildApiUrl = (path: string) => {
   }
 
   if (path.includes("/auth")) {
-    // replace "api/" in baseUrl with ""
+    // replace "api/" in baseUrl with "/"
     baseUrl = baseUrl.replace(/\/api\/$/, "/");
   }
 
