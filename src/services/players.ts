@@ -24,6 +24,18 @@ export type Player = {
   bio?: string;
 };
 
+export type CreatePlayerInput = {
+  first_name: string;
+  last_name: string;
+  country: string;
+  position: string;
+  jersey_number: number;
+  date_joined_club: string;
+  date_of_birth: string;
+  height_cm: number;
+  weight_kg: number;
+};
+
 export type PlayersFilters = {
   page?: number;
   pageSize?: number;
@@ -77,3 +89,26 @@ export const playersQueryOptions = (filters: PlayersFilters = {}) =>
     queryKey: ["players", filters],
     queryFn: () => fetchPlayers(filters),
   });
+
+export const createPlayer = async (
+  payload: CreatePlayerInput
+): Promise<Player> => {
+  const response = await fetchWithAuth(buildApiUrl("/players/"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    const message =
+      (errorBody && (errorBody.detail || errorBody.message)) ||
+      "Failed to create player";
+    throw new Error(message);
+  }
+
+  const data = await response.json();
+  return camelCaseKeys(data) as Player;
+};

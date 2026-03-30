@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Player } from "@/services/players";
+import { createPlayer, Player } from "@/services/players";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
@@ -19,28 +19,36 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-// Define the categories from the sample data
-const CATEGORIES = [
-  "Electronics",
-  "Computer Accessories",
-  "Audio",
-  "Office Furniture",
-  "Storage",
-];
+const POSITIONS = ["goalkeeper", "defender", "midfielder", "forward"];
 
 // Define the form schema with validation
 const PlayerFormSchema = z.object({
-  name: z.string().min(2, {
-    message: "Player name must be at least 2 characters.",
+  first_name: z.string().min(2, {
+    message: "First name must be at least 2 characters.",
   }),
-  category: z.string().min(1, {
-    message: "Please select a category.",
+  last_name: z.string().min(2, {
+    message: "Last name must be at least 2 characters.",
   }),
-  price: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-    message: "Price must be a positive number.",
+  country: z.string().min(2, {
+    message: "Country must be at least 2 characters.",
   }),
-  stock: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
-    message: "Stock must be a non-negative number.",
+  position: z.enum(["goalkeeper", "defender", "midfielder", "forward"], {
+    required_error: "Please select a position.",
+  }),
+  jersey_number: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+    message: "Jersey number must be a positive number.",
+  }),
+  date_joined_club: z.string().min(1, {
+    message: "Please select the date joined.",
+  }),
+  date_of_birth: z.string().min(1, {
+    message: "Please select the date of birth.",
+  }),
+  height_cm: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+    message: "Height must be a positive number.",
+  }),
+  weight_kg: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+    message: "Weight must be a positive number.",
   }),
 });
 
@@ -58,48 +66,66 @@ export function PlayerForm({
   initialData,
 }: PlayerFormProps) {
   const queryClient = useQueryClient();
-  const isEditing = !!initialData?.id;
+  const isEditing = !!initialData?.user?.id;
 
   // Create form with validation
   const form = useAppForm({
     validators: { onChange: PlayerFormSchema },
     defaultValues: {
-      name: initialData?.name || "",
-      category: initialData?.category || "",
-      price: initialData?.price ? String(initialData.price) : "",
-      stock: initialData?.stock ? String(initialData.stock) : "",
+      first_name: initialData?.user?.firstName || "",
+      last_name: initialData?.user?.lastName || "",
+      country: initialData?.user?.country || "",
+      position: initialData?.position || "",
+      jersey_number:
+        initialData?.jerseyNumber !== undefined
+          ? String(initialData.jerseyNumber)
+          : "",
+      date_joined_club: initialData?.dateJoinedClub || "",
+      date_of_birth: initialData?.dateOfBirth || "",
+      height_cm:
+        initialData?.heightCm !== undefined ? String(initialData.heightCm) : "",
+      weight_kg:
+        initialData?.weightKg !== undefined ? String(initialData.weightKg) : "",
     },
     onSubmit: async ({ value }) => {
-      // Create a new player object
-      const newPlayer: Player = {
-        id: initialData?.id || `PLAYER-${Math.floor(Math.random() * 1000)}`,
-        name: value.name,
-        category: value.category,
-        price: Number(value.price),
-        stock: Number(value.stock),
-        // Determine status based on stock
-        status:
-          Number(value.stock) === 0
-            ? "out_of_stock"
-            : Number(value.stock) <= 10
-              ? "low_stock"
-              : "in_stock",
-        createdAt: initialData?.createdAt || new Date().toISOString(),
+      const payload = {
+        first_name: value.first_name,
+        last_name: value.last_name,
+        country: value.country,
+        position: value.position,
+        jersey_number: Number(value.jersey_number),
+        date_joined_club: value.date_joined_club,
+        date_of_birth: value.date_of_birth,
+        height_cm: Number(value.height_cm),
+        weight_kg: Number(value.weight_kg),
       };
 
-      // In a real app, you would call an API here
-      // For now, we'll just invalidate the query to refresh the data
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate API call
+      const fallbackPlayer: Player = {
+        user: {
+          id: initialData?.user?.id || `USER-${Math.floor(Math.random() * 1000)}`,
+          firstName: value.first_name,
+          lastName: value.last_name,
+          country: value.country,
+          email: initialData?.user?.email || "",
+        },
+        position: value.position,
+        jerseyNumber: Number(value.jersey_number),
+        dateJoinedClub: value.date_joined_club,
+        dateOfBirth: value.date_of_birth,
+        heightCm: Number(value.height_cm),
+        weightKg: Number(value.weight_kg),
+      };
 
-      // Invalidate queries to refresh the data
+      const savedPlayer = isEditing
+        ? fallbackPlayer
+        : await createPlayer(payload);
+
       queryClient.invalidateQueries({ queryKey: ["players"] });
 
-      // Call onSuccess callback if provided
       if (onSuccess) {
-        onSuccess(newPlayer);
+        onSuccess(savedPlayer);
       }
 
-      // Close the dialog
       onOpenChange(false);
     },
   });
@@ -115,22 +141,22 @@ export function PlayerForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[880px]">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Edit Player" : "Add New Player"}
           </DialogTitle>
         </DialogHeader>
         <form.AppForm>
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="grid gap-4 sm:grid-cols-2" onSubmit={handleSubmit}>
             <form.AppField
-              name="name"
+              name="first_name"
               children={(field) => (
                 <field.FormItem>
-                  <field.FormLabel>Player Name</field.FormLabel>
+                  <field.FormLabel>First Name</field.FormLabel>
                   <field.FormControl>
                     <Input
-                      placeholder="Player Name"
+                      placeholder="First Name"
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
@@ -142,10 +168,46 @@ export function PlayerForm({
             />
 
             <form.AppField
-              name="category"
+              name="last_name"
               children={(field) => (
                 <field.FormItem>
-                  <field.FormLabel>Category</field.FormLabel>
+                  <field.FormLabel>Last Name</field.FormLabel>
+                  <field.FormControl>
+                    <Input
+                      placeholder="Last Name"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                  </field.FormControl>
+                  <field.FormMessage />
+                </field.FormItem>
+              )}
+            />
+
+            <form.AppField
+              name="country"
+              children={(field) => (
+                <field.FormItem>
+                  <field.FormLabel>Country</field.FormLabel>
+                  <field.FormControl>
+                    <Input
+                      placeholder="Country"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                  </field.FormControl>
+                  <field.FormMessage />
+                </field.FormItem>
+              )}
+            />
+
+            <form.AppField
+              name="position"
+              children={(field) => (
+                <field.FormItem>
+                  <field.FormLabel>Position</field.FormLabel>
                   <field.FormControl>
                     <Select
                       value={field.state.value}
@@ -153,12 +215,12 @@ export function PlayerForm({
                       onOpenChange={field.handleBlur}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
+                        <SelectValue placeholder="Select a position" />
                       </SelectTrigger>
                       <SelectContent>
-                        {CATEGORIES.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
+                        {POSITIONS.map((position) => (
+                          <SelectItem key={position} value={position}>
+                            {position}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -170,25 +232,19 @@ export function PlayerForm({
             />
 
             <form.AppField
-              name="price"
+              name="jersey_number"
               children={(field) => (
                 <field.FormItem>
-                  <field.FormLabel>Price</field.FormLabel>
+                  <field.FormLabel>Jersey Number</field.FormLabel>
                   <field.FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2">
-                        $
-                      </span>
-                      <Input
-                        type="text"
-                        inputMode="decimal"
-                        className="pl-6"
-                        placeholder="99.99"
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        onBlur={field.handleBlur}
-                      />
-                    </div>
+                    <Input
+                      type="number"
+                      min="1"
+                      placeholder="10"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
                   </field.FormControl>
                   <field.FormMessage />
                 </field.FormItem>
@@ -196,29 +252,82 @@ export function PlayerForm({
             />
 
             <form.AppField
-              name="stock"
+              name="date_joined_club"
               children={(field) => (
                 <field.FormItem>
-                  <field.FormLabel>Stock</field.FormLabel>
+                  <field.FormLabel>Date Joined Club</field.FormLabel>
                   <field.FormControl>
                     <Input
-                      type="number"
-                      min="0"
-                      placeholder="10"
+                      type="date"
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
                     />
                   </field.FormControl>
-                  <field.FormDescription>
-                    Enter 0 for out of stock items.
-                  </field.FormDescription>
                   <field.FormMessage />
                 </field.FormItem>
               )}
             />
 
-            <div className="flex justify-end space-x-2 pt-4">
+            <form.AppField
+              name="date_of_birth"
+              children={(field) => (
+                <field.FormItem>
+                  <field.FormLabel>Date of Birth</field.FormLabel>
+                  <field.FormControl>
+                    <Input
+                      type="date"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                  </field.FormControl>
+                  <field.FormMessage />
+                </field.FormItem>
+              )}
+            />
+
+            <form.AppField
+              name="height_cm"
+              children={(field) => (
+                <field.FormItem>
+                  <field.FormLabel>Height (cm)</field.FormLabel>
+                  <field.FormControl>
+                    <Input
+                      type="number"
+                      min="1"
+                      placeholder="180"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                  </field.FormControl>
+                  <field.FormMessage />
+                </field.FormItem>
+              )}
+            />
+
+            <form.AppField
+              name="weight_kg"
+              children={(field) => (
+                <field.FormItem>
+                  <field.FormLabel>Weight (kg)</field.FormLabel>
+                  <field.FormControl>
+                    <Input
+                      type="number"
+                      min="1"
+                      placeholder="75"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                  </field.FormControl>
+                  <field.FormMessage />
+                </field.FormItem>
+              )}
+            />
+
+            <div className="flex justify-end space-x-2 pt-4 sm:col-span-2">
               <Button
                 type="button"
                 variant="outline"

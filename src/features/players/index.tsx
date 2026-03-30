@@ -136,9 +136,13 @@ export default function PlayerPage() {
         onOpenChange={setIsAddPlayerOpen}
         initialData={editingPlayer || undefined}
         onSuccess={(player: Player) => {
+          const displayName =
+            player.user?.firstName && player.user?.lastName
+              ? `${player.user.firstName} ${player.user.lastName}`
+              : "Player";
           toast({
             title: editingPlayer ? "Player updated" : "Player added",
-            description: `${player.name ?? "Player"} has been ${
+            description: `${displayName} has been ${
               editingPlayer ? "updated" : "added"
             }.`,
           });
