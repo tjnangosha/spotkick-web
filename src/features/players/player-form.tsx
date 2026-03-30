@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createPlayer, Player } from "@/services/players";
+import { createPlayer, Player, updatePlayer } from "@/services/players";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
@@ -100,24 +100,8 @@ export function PlayerForm({
         weight_kg: Number(value.weight_kg),
       };
 
-      const fallbackPlayer: Player = {
-        user: {
-          id: initialData?.user?.id || `USER-${Math.floor(Math.random() * 1000)}`,
-          firstName: value.first_name,
-          lastName: value.last_name,
-          country: value.country,
-          email: initialData?.user?.email || "",
-        },
-        position: value.position,
-        jerseyNumber: Number(value.jersey_number),
-        dateJoinedClub: value.date_joined_club,
-        dateOfBirth: value.date_of_birth,
-        heightCm: Number(value.height_cm),
-        weightKg: Number(value.weight_kg),
-      };
-
-      const savedPlayer = isEditing
-        ? fallbackPlayer
+      const savedPlayer = isEditing && initialData?.user?.id
+        ? await updatePlayer(initialData.user.id, payload)
         : await createPlayer(payload);
 
       queryClient.invalidateQueries({ queryKey: ["players"] });
@@ -332,10 +316,11 @@ export function PlayerForm({
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                className="cursor-pointer"
               >
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button type="submit" className="cursor-pointer">
                 {isEditing ? "Update Player" : "Add Player"}
               </Button>
             </div>

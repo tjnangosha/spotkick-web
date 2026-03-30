@@ -101,6 +101,13 @@ export default function PlayerPage() {
     });
   };
 
+  const handleFormOpenChange = (open: boolean) => {
+    setIsAddPlayerOpen(open);
+    if (!open) {
+      setEditingPlayer(null);
+    }
+  };
+
   return (
     <div>
       <div>
@@ -112,6 +119,7 @@ export default function PlayerPage() {
             </p>
           </div>
           <Button
+            className="cursor-pointer"
             onClick={() => {
               setEditingPlayer(null);
               setIsAddPlayerOpen(true);
@@ -132,8 +140,9 @@ export default function PlayerPage() {
         </div>
       </div>
       <PlayerForm
+        key={editingPlayer?.user?.id ?? "new"}
         open={isAddPlayerOpen}
-        onOpenChange={setIsAddPlayerOpen}
+        onOpenChange={handleFormOpenChange}
         initialData={editingPlayer || undefined}
         onSuccess={(player: Player) => {
           const displayName =
@@ -146,6 +155,7 @@ export default function PlayerPage() {
               editingPlayer ? "updated" : "added"
             }.`,
           });
+          setEditingPlayer(null);
         }}
       />
     </div>

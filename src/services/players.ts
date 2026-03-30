@@ -112,3 +112,30 @@ export const createPlayer = async (
   const data = await response.json();
   return camelCaseKeys(data) as Player;
 };
+
+export const updatePlayer = async (
+  playerId: string,
+  payload: CreatePlayerInput
+): Promise<Player> => {
+  const response = await fetchWithAuth(
+    buildApiUrl(`/players/${playerId}/`),
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    const message =
+      (errorBody && (errorBody.detail || errorBody.message)) ||
+      "Failed to update player";
+    throw new Error(message);
+  }
+
+  const data = await response.json();
+  return camelCaseKeys(data) as Player;
+};

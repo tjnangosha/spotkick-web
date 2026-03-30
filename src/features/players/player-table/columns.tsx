@@ -93,42 +93,42 @@ export const createColumns = ({
     ),
     cell: ({ row }) => <div className="font-medium">{row.getValue("jerseyNumber")}</div>,
   },
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => {
-  //     const player = row.original;
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const player = row.original;
 
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button variant="ghost" className="h-8 w-8 p-0">
-  //             <span className="sr-only">Open menu</span>
-  //             <MoreHorizontal className="h-4 w-4" />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent align="end">
-  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-  //           <DropdownMenuItem
-  //             onClick={() => navigator.clipboard.writeText(player.id)}
-  //           >
-  //             Copy player ID
-  //           </DropdownMenuItem>
-  //           <DropdownMenuSeparator />
-  //           <DropdownMenuItem>View details</DropdownMenuItem>
-  //           <DropdownMenuItem onClick={() => onEdit?.(player)}>
-  //             Edit player
-  //           </DropdownMenuItem>
-  //           <DropdownMenuItem
-  //             onClick={() => onDelete?.(player)}
-  //             className="text-destructive"
-  //           >
-  //             Delete player
-  //           </DropdownMenuItem>
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     );
-  //   },
-  // },
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel style={{ fontWeight: "bold" }}>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(player.user.id)}
+            >
+              Copy player ID
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            {/* <DropdownMenuItem>View details</DropdownMenuItem> */}
+            <DropdownMenuItem onSelect={() => onEdit?.(player)}>
+              Edit player
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => onDelete?.(player)}
+              className="text-destructive"
+            >
+              Delete player
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
 ];
 
 // Export default columns for backward compatibility
