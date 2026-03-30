@@ -139,3 +139,20 @@ export const updatePlayer = async (
   const data = await response.json();
   return camelCaseKeys(data) as Player;
 };
+
+export const deletePlayer = async (playerId: string): Promise<void> => {
+  const response = await fetchWithAuth(
+    buildApiUrl(`/players/${playerId}/`),
+    {
+      method: "DELETE",
+    }
+  );
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    const message =
+      (errorBody && (errorBody.detail || errorBody.message)) ||
+      "Failed to delete player";
+    throw new Error(message);
+  }
+};

@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Player } from "@/services/players";
+import { Player, deletePlayer } from "@/services/players";
 import { Route } from "@/routes/dashboard/players";
 import { PlayersFilters, playersQueryOptions } from "@/services/players";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import { useState } from "react";
 import { PlayerForm } from "./player-form";
@@ -12,6 +12,7 @@ import { PlayerTable } from "./player-table";
 export default function PlayerPage() {
   const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const queryClient = useQueryClient();
 
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
@@ -94,11 +95,27 @@ export default function PlayerPage() {
   };
 
   // Handle delete player
-  const handleDeletePlayer = (player: Player) => {
-    toast({
-      title: "Player deleted",
-      description: `${player.name ?? "Player"} has been deleted.`,
-    });
+  const handleDeletePlayer = async (player: Player) => {
+    const displayName =
+      player.user?.firstName && player.user?.lastName
+        ? `${player.user.firstName} ${player.user.lastName}`
+        : "Player";
+
+    try {
+      await deletePlayer(player.user.id);
+      await queryClient.invalidateQueries({ queryKey: ["players"] });
+      toast({
+        title: "Player deleted",
+        description: `${displayName} has been deleted.`,
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to delete player.";
+      toast({
+        title: "Delete failed",
+        description: message,
+      });
+    }
   };
 
   const handleFormOpenChange = (open: boolean) => {

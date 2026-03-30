@@ -119,7 +119,7 @@ export const createColumns = ({
               Edit player
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => onDelete?.(player)}
+              onSelect={() => onDelete?.(player)}
               className="text-destructive"
             >
               Delete player
