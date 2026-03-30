@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/store/auth.store";
-import { silentRefresh } from "@/lib/auth";
+import { silentRefresh } from "@/services/auth";
 
 type FetchInput = RequestInfo | URL;
 

@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { fetchWithAuth } from "@/lib/api/client";
+import { buildApiUrl, getApiBaseUrl } from "@/lib/api/config";
 
 export type Player = {
   id: string;
@@ -32,8 +33,6 @@ type PlayersResponse = {
   };
 };
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "";
-
 const buildPlayersUrl = (filters: PlayersFilters) => {
   const params = new URLSearchParams();
   if (filters.page !== undefined) params.set("page", String(filters.page));
@@ -43,11 +42,11 @@ const buildPlayersUrl = (filters: PlayersFilters) => {
   if (filters.sortOrder) params.set("sort_order", filters.sortOrder);
 
   const path = "/players";
-  if (!API_BASE_URL) {
+  if (!getApiBaseUrl()) {
     return `${path}?${params.toString()}`;
   }
 
-  const url = new URL(path, API_BASE_URL);
+  const url = new URL(buildApiUrl(path));
   url.search = params.toString();
   return url.toString();
 };

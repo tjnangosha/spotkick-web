@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser } from "@/services/auth";
 
 export default function SettingsView() {
   const [open, setOpen] = useState(false);

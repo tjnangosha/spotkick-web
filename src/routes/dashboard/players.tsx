@@ -30,6 +30,7 @@ const playersSearchSchema = z.object({
 
 export const Route = createFileRoute("/dashboard/players")({
   component: PlayerPage,
+  ssr: false,
   validateSearch: (search) => playersSearchSchema.parse(search),
   loaderDeps: ({ search }) => ({
     page: search.page,
@@ -46,15 +47,12 @@ export const Route = createFileRoute("/dashboard/players")({
       pageSize: deps.pageSize,
       sortBy: deps.sortBy,
       sortOrder: deps.sortOrder,
-      name: deps.name,
-      category: deps.category,
-      status: deps.status,
     };
 
     if (typeof window !== "undefined") {
       // Prefetch data using React Query
       await context.queryClient.ensureQueryData(playersQueryOptions(filters));
-    }
+    } 
     return {
       crumb: "Players",
     };

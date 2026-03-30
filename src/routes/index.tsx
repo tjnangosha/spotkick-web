@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useAuthStore } from "@/store/auth.store";
 
 export const Route = createFileRoute("/")({
+  ssr: false,
   component: SignInRoute,
 });
 

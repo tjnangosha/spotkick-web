@@ -17,7 +17,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { UserNav } from "@/components/user-nav";
-import { AuthUser, getCurrentUser } from "@/lib/auth";
+import { AuthUser, getCurrentUser } from "@/services/auth";
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/auth.store";

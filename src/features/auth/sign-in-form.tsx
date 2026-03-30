@@ -13,7 +13,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
-import { signIn } from "@/lib/auth";
+import { signIn } from "@/services/auth";
 
 export default function SignInForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);

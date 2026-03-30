@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { navigationItems, userMenuItems } from "@/data/navigation";
-import { AuthUser, signOut } from "@/lib/auth";
+import { AuthUser, signOut } from "@/services/auth";
 
 interface AppSidebarProps {
   user?: AuthUser;

@@ -24,8 +24,6 @@ export default function PlayerPage() {
     pageSize: search.pageSize,
     sortBy: search.sortBy,
     sortOrder: search.sortOrder,
-    category: search.category,
-    status: search.status,
   };
 
   // Use React Query to fetch data

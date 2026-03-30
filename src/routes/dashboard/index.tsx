@@ -3,6 +3,7 @@ import { DashboardOverview } from "@/features/overview";
 
 export const Route = createFileRoute("/dashboard/")({
   component: DashboardOverview,
+  ssr: false,
   loader: () => ({
     crumb: "Dashboard",
   }),

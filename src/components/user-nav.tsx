@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOut } from "@/lib/auth";
+import { signOut } from "@/services/auth";
 import { useRouter } from "@tanstack/react-router";
 
 interface UserNavProps {
